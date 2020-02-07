@@ -1,6 +1,7 @@
 from urllib.parse import urlencode
 from pprint import pprint
 import requests
+import time
 
 OAUTH_URL = 'https://oauth.vk.com/authorize'
 OAUTH_PARAMS = {
@@ -13,7 +14,7 @@ OAUTH_PARAMS = {
 
 # print('?'.join((OAUTH_URL, urlencode(OAUTH_PARAMS))))
 
-TOKEN = '698d2bc404e1b505cd841025f5f640005ff34899ffa32eb4fe065438e4708aaaf45b82700d9bcedfd82ef'
+TOKEN = '3284df561eb4ef353ed161409b9258923335e67a224d94bc858b4ae8a0c0e47c85b182cfab963399707d3'
 
 # params = {
 #     'access_token': TOKEN,
@@ -21,7 +22,7 @@ TOKEN = '698d2bc404e1b505cd841025f5f640005ff34899ffa32eb4fe065438e4708aaaf45b827
 #     'fields': 'first_name',
 #     'order': 'name'
 # }
-
+#
 # response = requests.get(
 #     'https://api.vk.com/method/friends.get',
 #     params
@@ -39,6 +40,44 @@ class UserVk:
 
         response_user = requests.get('https://api.vk.com/method/users.get?', urlencode(params))
         user_info = response_user.json()
-        # print(user_info)
+        self.first_name, self.last_name = user_info['response'][0]['first_name'], user_info['response'][0]['last_name']
+        # print(self.first_name)
+        response_friends = requests.get('https://api.vk.com/method/friends.get?', urlencode(params))
+        friends_info = response_friends.json()
+        # print(friends_info)
+        self.friend_list = friends_info['response']['items']
 
-user1= UserVk('45255933')
+        try:
+            self.friend_list = friends_info['response']['items']
+        except KeyError:
+            self.friend_list = []
+
+    def __and__(self, other):
+        self_friends = set(self.friend_list)
+        other_friends = set(other.friend_list)
+        mutual_friends = self_friends.intersection(other_friends)
+        users_list = []
+        counter = 0
+
+        for friend in mutual_friends:
+            counter += 1
+            print(f'Общих друзей найдено: {counter}')
+            user = UserVk(friend)
+            # time.sleep(1)
+            users_list.append(user)
+        return users_list
+
+    def __str__(self):
+            string = f'ID: {self.id}\nИмя: {self.first_name}\nФамилия: {self.last_name}\n***\n'
+            return string
+
+
+first_user = UserVk('45255933')
+second_user = UserVk('17460386')
+mutual_list = first_user & second_user
+
+print(f'\nОбщие друзья для {first_user.first_name} {first_user.last_name} и {second_user.first_name} {second_user.last_name}:\n')
+for user in mutual_list:
+    print(user)
+
+# user1= UserVk('45255933')
