@@ -70,19 +70,19 @@ class VkUser:
             time.sleep(1)
             users_list.append(user)
         return users_list
-    #
-    # def __str__(self):
-    #     string = f'ID: {self.id}\nИмя: {self.first_name}\nФамилия: {self.last_name}\n***\n'
-    #     return string
+
+    def __str__(self):
+        string = f'ID: {self.id}\nИмя: {self.first_name}\nФамилия: {self.last_name}\n***\n'
+        return string
 
 
 first_user = VkUser(107151055)
 second_user = VkUser(17460386)
 mutual_list = first_user & second_user
 
-# print(f'\nОбщие друзья для {first_user.first_name} {first_user.last_name} и {second_user.first_name} {second_user.last_name}:\n')
-# for user in mutual_list:
-#     print(user)
+print(f'\nОбщие друзья для {first_user.first_name} {first_user.last_name} и {second_user.first_name} {second_user.last_name}:\n')
+for user in mutual_list:
+    print(user)
 
 
 # user1 = VkUser(17460386)  # 17460386 - мой id
